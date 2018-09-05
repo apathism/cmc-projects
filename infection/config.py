@@ -1,0 +1,20 @@
+from PyQt4.QtGui import QColor
+
+WEEKS_IN_MONTH = 4
+MONTHS_IN_YEAR = 12
+WINDOW_SIZE_X = 1024
+WINDOW_SIZE_Y = 640
+QT_FULL_CRICLE_DEGREE = 5760
+BIG_FOR_CAPTION_RADIUS = 50
+GRAPHICS_ILL_COLORS = [
+    QColor(255, 0, 0, 255),
+    QColor(255, 100, 0, 255),
+    QColor(255, 150, 0, 255),
+    QColor(255, 200, 0, 255),
+]
+GRAPHICS_VACCINATED_COLORS = [
+    QColor(0, 255, 0, 255),
+    QColor(0, 255, 255, 255),
+    QColor(0, 100, 255, 255),
+    QColor(0, 0, 255, 255),
+]

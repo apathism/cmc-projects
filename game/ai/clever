@@ -1,0 +1,115 @@
+turn := 0;
+fcountdown := 5;
+
+buy[0]:=buy[1]:=buy[2]:=0;
+sell[0]:=sell[1]:=sell[2]:=0;
+
+@start;
+If [Bankrupt | GameOver]
+[
+	PrintLine ["Well, the game is over for me"];
+	Goto[ end ]
+];
+
+turn := turn + 1;
+fcountdown := fcountdown - 1;
+PrintLine["It's turn #"][turn][" now"];
+
+myraw := GetPlayerRaw[MyNick];
+Print["I have "][myraw][" raw "];
+myproduct := GetPlayerProduct[MyNick];
+PrintLine["and "][myproduct][" product items"];
+
+producepower := GetPlayerPlants[MyNick] + GetPlayerAutoPlants[MyNick]*2;
+
+j:=0;
+sumraw := 0;
+sumproduct := 0;
+@beforecycle;
+nick:=PlayerNick[j];
+sumraw := sumraw + GetPlayerPlants[nick] + GetPlayerAutoPlants[nick]*2;
+sumproduct := sumproduct + GetPlayerProduct[nick];
+j:=j+1;
+If [j < PlayersInGame]
+[
+	Goto[beforecycle]
+];
+
+PrintLine["Summary raw: "][sumraw];
+PrintLine["Summary product: "][sumproduct];
+
+PrintLine["I'll produce "][Min[myraw][producepower]][" product items"];
+Produce[Min[myraw][producepower]];
+
+marketrawcost := MarketRawCost;
+marketproductcost := MarketProductCost;
+
+planrawcost := marketrawcost + Max[0][If [sumraw <= MarketRawAvailable][0]
+[
+	If [buy[0]=0 & buy[1]=0 & buy[2]=0][Random[2]*50]
+	[
+		[buy[0] + buy[1] + buy[2]] / [[buy[0]!=0] + [buy[1]!=0] + [buy[2]!=0]] + [Random[15]-7]*50
+	]
+]];
+
+planproductcost := Max[1][marketproductcost - Max[0][If [sumproduct <= MarketProductAvailable][0]
+[
+	If [sell[0]=0 & sell[1]=0 & sell[2]=0][Random[2]*50]
+	[
+		[sell[0] + sell[1] + sell[2]] / [[sell[0]!=0] + [sell[1]!=0] + [sell[2]!=0]] + [Random[15]-7]*50
+	]
+]]];
+
+PrintLine["I'll try to buy "][producepower][" raw by cost "][planrawcost];
+Buy[Min[producepower][MarketRawAvailable]][planrawcost];
+PrintLine["I'll try to sell "][myproduct][" product by cost "][planproductcost];
+Sell[Min[myproduct][MarketProductAvailable]][planproductcost];
+NextTurn;
+
+If [GetPlayerMoney[MyNick] >= 20000 & countdown <= 0]
+[
+	countdown := 10;
+	Build
+];
+
+j:=0;
+buycost := 0;
+sellcost := 0;
+@aftercycle;
+nick:=PlayerNick[j];
+If [GetPlayerBoughtAmount[nick]]
+[
+	buycost := Max[buycost][GetPlayerBoughtCost[nick]-marketrawcost]
+];
+If [GetPlayerSoldAmount[nick]]
+[
+	sellcost := Max[sellcost][marketproductcost-GetPlayerSoldCost[nick]]*GetPlayerSoldAmount[nick]
+];
+j:=j+1;
+If [j < PlayersInGame]
+[
+	Goto[aftercycle]
+];
+sell[0] := sell[1];
+buy[0] := buy[1];
+sell[1] := sell[2];
+buy[1] := buy[2];
+sell[2]:= sellcost;
+buy[2]:= buycost;
+PrintLine["Buy cost difference on that move was "][buy[2]];
+PrintLine["Sell cost difference on that move was "][sell[2]];
+PrintLine["================================================"];
+
+Goto [start];
+@end;
+
+If[GameWin]
+[
+	PrintLine["Win!"]
+]
+[
+	if [GameLoose]
+	[
+		PrintLine["Loose!"]
+	]
+]

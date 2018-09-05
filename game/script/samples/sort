@@ -1,0 +1,57 @@
+" === Input === ";
+
+n := ReadInt;
+
+If [n < 2]
+[
+	PrintLine["Array should contain at least 2 elements to sort"];
+	Goto[ end ]
+];
+
+i := 0;
+
+@inputcycle;
+a[i] := ReadInt;
+i := i + 1;
+If [i < n]
+[
+	Goto[inputcycle]
+];
+
+" === Sort === ";
+
+i := n - 1;
+@sort1;
+j := 0;
+@sort2;
+If [a[j] > a[j+1]]
+[
+	t := a[j];
+	a[j] := a[j+1];
+	a[j+1] := t
+];
+j := j + 1;
+If [j < i]
+[
+	Goto[sort2]
+];
+i := i - 1;
+If [i > 1]
+[
+	Goto[sort1]
+];
+
+
+" === Output === ";
+
+i := 0;
+@outputcycle;
+Print[a[i]][" "];
+i := i + 1;
+If [i < n]
+[
+	Goto[outputcycle]
+];
+PrintLine;
+
+@end

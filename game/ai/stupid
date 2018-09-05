@@ -1,0 +1,40 @@
+turn := 0;
+
+@start;
+If [Bankrupt | GameOver]
+[
+	PrintLine ["Well, the game is over for me"];
+	Goto[ end ]
+];
+
+turn := turn + 1;
+PrintLine["It's turn #"][turn][" now"];
+
+myraw := GetPlayerRaw[MyNick];
+Print["I have "][myraw][" raw "];
+myproduct := GetPlayerProduct[MyNick];
+PrintLine["and "][myproduct][" product items"];
+
+PrintLine["I'll produce "][Min[myraw][2]][" product items"];
+Produce[Min[myraw][2]];
+
+PrintLine["I'll try to buy 2 raw by cost "][MarketRawCost];
+Buy[2][MarketRawCost];
+
+PrintLine["I'll try to sell "][Min[myproduct][MarketProductAvailable]][" product by cost "][MarketProductCost];
+Sell[Min[myproduct][MarketProductAvailable]][planproductcost];
+NextTurn;
+
+Goto [start];
+@end;
+
+If[GameWin]
+[
+	PrintLine["Win!"]
+]
+[
+	if [GameLoose]
+	[
+		PrintLine["Loose!"]
+	]
+]

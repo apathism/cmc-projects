@@ -1,0 +1,15 @@
+a := ReadInt;
+b := ReadInt;
+
+If [a < 0][ a := [-a] ];
+If [b < 0][ b := [-b] ];
+
+@cycle;
+If [b = 0][ Goto[end] ];
+c := a - a/b*b;
+a := b;
+b := c;
+Goto[cycle];
+@end;
+PrintLine[a]
+
